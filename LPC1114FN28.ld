@@ -8,16 +8,25 @@ ENTRY(_start)
 
 SECTIONS
 {
+    . = ORIGIN(FLASH);
     .text : {
-        *(.text*)
-    } > FLASH
+        *(.vectors)
+        *(.text)
+        *(.rodata)
+    } >FLASH
 
+    . = ORIGIN(RAM);
     .data : {
-        *(.data*)
-    } > RAM
-
+        *(.data)
+    } >RAM AT >FLASH
     .bss : {
-        *(.bss*)
+        *(.bss)
         *(COMMON)
-    } > RAM
+    } >RAM
+
+    . = ALIGN(4);
+    . = . + 0x1000;
+    stack_top = .;
+
+    /* /DISCARD/ : { *(*) } */
 }
