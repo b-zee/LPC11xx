@@ -10,7 +10,7 @@ SECTIONS
 {
     . = ORIGIN(FLASH);
     .text : {
-        *(.vectors)
+        KEEP(*(.vectors))
         *(.text)
         *(.rodata)
     } >FLASH
@@ -19,14 +19,18 @@ SECTIONS
     .data : {
         *(.data)
     } >RAM AT >FLASH
+
+    __bss_start = .;
     .bss : {
         *(.bss)
         *(COMMON)
     } >RAM
+    __bss_end = .;
 
     . = ALIGN(4);
-    . = . + 0x1000;
-    stack_top = .;
+    __stack_start = .;
+    . = . + 1K;
+    __stack_end = .;
 
     /* /DISCARD/ : { *(*) } */
 }

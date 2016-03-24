@@ -1,29 +1,25 @@
-BIN = bin/
-INC = inc/
-OBJ = obj/
-SRC = src/
+OBJECTS = core_cm0.o system_LPC11xx.o vector_table.o startup.o main.o
 
-ELF = $(BIN)LPC1114FN28.elf
-HEX = $(BIN)LPC1114FN28.hex
+BIN = LPC1114FN28.bin
+ELF = LPC1114FN28.elf
+HEX = LPC1114FN28.hex
 LD  = LPC1114FN28.ld
-MAP = $(BIN)LPC1114FN28.map
+MAP = LPC1114FN28.map
 
-OBJECTS = $(OBJ)core_cm0.o $(OBJ)system_LPC11xx.o $(OBJ)vector_table.o $(OBJ)startup.o $(OBJ)main.o
-
-
-all: $(HEX)
+all: clean $(HEX)
 
 
 $(HEX): $(ELF)
 	arm-none-eabi-objcopy -O ihex $(ELF) $(HEX)
+	arm-none-eabi-objcopy -O binary $(ELF) $(BIN)
 
 $(ELF): $(OBJECTS) $(LD)
-	arm-none-eabi-gcc -fno-ident  -nostartfiles -nodefaultlibs -Wl,--gc-sections -Wl,-Map,$(MAP) -T $(LD) -o $(ELF) $(OBJECTS)
+	arm-none-eabi-gcc -nostartfiles -T $(LD) -Wl,-Map,$(MAP) -Wl,-gc-sections -o $(ELF) $(OBJECTS)
 
-$(OBJ)%.o: $(SRC)%.c
-	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -o $@ -I"$(INC)" -c $<
+%.o: %.c
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -O0 -o $@ -c $<
 
 
 clean:
 	rm -rf $(OBJECTS)
-	rm -rf $(ELF) $(MAP) $(HEX)
+	rm -rf $(BIN) $(ELF) $(HEX) $(MAP)
