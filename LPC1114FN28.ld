@@ -8,29 +8,31 @@ ENTRY(_start)
 
 SECTIONS
 {
-    . = ORIGIN(FLASH);
     .text : {
         KEEP(*(.vectors))
         *(.text)
         *(.rodata)
     } >FLASH
 
-    . = ORIGIN(RAM);
     .data : {
+        __data_start_lma = LOADADDR(.data);
+        __data_start = .;
         *(.data)
+        __data_end = .;
     } >RAM AT >FLASH
 
-    __bss_start = .;
     .bss : {
+        __bss_start = .;
         *(.bss)
         *(COMMON)
+        __bss_end = .;
     } >RAM
-    __bss_end = .;
 
-    . = ALIGN(4);
-    __stack_start = .;
-    . = . + 1K;
-    __stack_end = .;
+    .stack ALIGN(4) : {
+        __stack_start = .;
+        . = . + 1K;
+        __stack_end = .;
+    }
 
     /* /DISCARD/ : { *(*) } */
 }
