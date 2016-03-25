@@ -61,13 +61,14 @@ const handler table[]  __attribute__ ((section(".vectors"))) = {
 
 void _reset(void) {
     _start();
+    while (1);
 }
 
 extern int main(void);
 
 void _start(void)
 {
-    // Clear BSS segment
+    // Clear .bss segment
     extern int __bss_start;
     extern int __bss_end;
 
@@ -77,7 +78,7 @@ void _start(void)
         p++;
     }
 
-    // Copy DATA from FLASH (ROM) to RAM
+    // Copy .data from FLASH (ROM) to RAM
     extern int __data_start;
     extern int __data_start_lma;
     extern int __data_end;
@@ -89,6 +90,4 @@ void _start(void)
     }
 
     (void)main();
-
-    while (1);
 }
