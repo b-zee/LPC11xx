@@ -1,12 +1,11 @@
 #include "LPC11xx.h"
 
-#include <stdint.h>
 
 #define IRC_FREQ           12000000UL
 #define SYSAHBCLKDIV_value 0x01
 #define   UARTCLKDIV_value 0x01
 
-#define BAUD_RATE    9600
+#define BAUD_RATE    19200
 #define UART_DIVISOR (IRC_FREQ / SYSAHBCLKDIV_value / UARTCLKDIV_value / BAUD_RATE / 16)
 
 
@@ -17,7 +16,7 @@ static void sys_init(void)
 }
 
 // Assumes values have reset values
-static void uart_init()
+void uart_init()
 {
     // Set RXD and TXD functions
     LPC_IOCON->PIO1_6 = (LPC_IOCON->PIO1_6 & ~0x7) | 0x1;
@@ -28,33 +27,47 @@ static void uart_init()
     LPC_SYSCON->UARTCLKDIV     = UARTCLKDIV_value;
 
     // Set Word Length Select to 8-bit character length
-    LPC_UART->U0LCR &= ~0x3;
-    LPC_UART->U0LCR |= 0x3;
+    LPC_UART->LCR &= ~0x3;
+    LPC_UART->LCR |= 0x3;
 
     // Enable access to Divisor Latches
-    LPC_UART->U0LCR |= (1 << 7);
+    LPC_UART->LCR |= (1 << 7);
 
     // Write divisor to latches
-    LPC_UART->U0DLM = (UART_DIVISOR >> 8) & 0xFF;
-    LPC_UART->U0DLL = (UART_DIVISOR >> 0) & 0xFF;
+    LPC_UART->DLM = (UART_DIVISOR >> 8) & 0xFF;
+    LPC_UART->DLL = (UART_DIVISOR >> 0) & 0xFF;
 
     // Enable fractional baud rate generator
     //LPC_UART->U0LCR &= ~0xFF;
     //LPC_UART->U0LCR |= (1 << 4) | (1 << 0);
 
     // Enable FIFO
-    LPC_UART->U0FCR |= (1 << 0);
+    LPC_UART->FCR |= (1 << 0);
 
     // Disable access to Divisor Latches (thus allowing to put chars in THR)
-    LPC_UART->U0LCR &= ~(1 << 7);
+    LPC_UART->LCR &= ~(1 << 7);
 }
 
-void uart_putc(char c)
+void uart_putc(const char c)
 {
     while(!(LPC_UART->LSR & (1 << 6)))
         ;
 
     LPC_UART->THR = c;
+}
+
+void uart_puts(const char *str)
+{
+    while (*str != '\0') {
+        uart_putc(*str++);
+    }
+}
+
+void uart_puti(int i)
+{
+    do {
+        uart_putc(i % 10 + '0');
+    } while (i /= 10);
 }
 
 int main(void)
@@ -63,9 +76,12 @@ int main(void)
 
     uart_init();
 
-    for (char c = 'A'; c < 'Z'; ++c) {
-        uart_putc(c);
-    }
+    uart_puts("AB");
+    uart_putc('0');
+    uart_puts("CD");
+    uart_puti(10);
+    uart_puts("EF");
+    //uart_puts("ABCDEF");
 
     LPC_GPIO1->DIR |= (1 << 8); // Configure as output
 
