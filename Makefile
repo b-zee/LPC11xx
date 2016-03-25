@@ -1,5 +1,5 @@
 TTY  ?= /dev/ttyUSB0
-BAUD ?= 115200
+BAUD ?= 9600
 
 FILE   = _start main
 #core_cm0 system_LPC11xx

@@ -2,23 +2,70 @@
 
 #include <stdint.h>
 
+#define IRC_FREQ           12000000UL
+#define SYSAHBCLKDIV_value 0x01
+#define   UARTCLKDIV_value 0x01
 
-int main(void)
+#define BAUD_RATE    9600
+#define UART_DIVISOR (IRC_FREQ / SYSAHBCLKDIV_value / UARTCLKDIV_value / BAUD_RATE / 16)
+
+
+static void sys_init(void)
 {
-    // Enable clock for IOCON
+    LPC_SYSCON->SYSAHBCLKDIV   = SYSAHBCLKDIV_value;
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 16);
+}
 
+// Assumes values have reset values
+static void uart_init()
+{
+    // Set RXD and TXD functions
     LPC_IOCON->PIO1_6 = (LPC_IOCON->PIO1_6 & ~0x7) | 0x1;
     LPC_IOCON->PIO1_7 = (LPC_IOCON->PIO1_7 & ~0x7) | 0x1;
 
     // Enable clock for UART
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
-    LPC_SYSCON->UARTCLKDIV     = 0x00000001;
+    LPC_SYSCON->UARTCLKDIV     = UARTCLKDIV_value;
+
+    // Set Word Length Select to 8-bit character length
+    LPC_UART->U0LCR &= ~0x3;
+    LPC_UART->U0LCR |= 0x3;
+
+    // Enable access to Divisor Latches
+    LPC_UART->U0LCR |= (1 << 7);
+
+    // Write divisor to latches
+    LPC_UART->U0DLM = (UART_DIVISOR >> 8) & 0xFF;
+    LPC_UART->U0DLL = (UART_DIVISOR >> 0) & 0xFF;
+
+    // Enable fractional baud rate generator
+    //LPC_UART->U0LCR &= ~0xFF;
+    //LPC_UART->U0LCR |= (1 << 4) | (1 << 0);
+
+    // Enable FIFO
+    LPC_UART->U0FCR |= (1 << 0);
+
+    // Disable access to Divisor Latches (thus allowing to put chars in THR)
+    LPC_UART->U0LCR &= ~(1 << 7);
+}
+
+void uart_putc(char c)
+{
+    while(!(LPC_UART->LSR & (1 << 6)))
+        ;
+
+    LPC_UART->THR = c;
+}
+
+int main(void)
+{
+    sys_init();
+
+    uart_init();
+
 
     for (char c = 'A'; c < 'Z'; ++c) {
-        while(!(LPC_UART->LSR & (1 << 5)));
-
-        LPC_UART->THR = (LPC_UART->THR & ~0xFF) | c;
+        uart_putc(c);
     }
 
     LPC_GPIO1->DIR |= (1 << 8); // Configure as output
