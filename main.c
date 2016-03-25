@@ -63,7 +63,6 @@ int main(void)
 
     uart_init();
 
-
     for (char c = 'A'; c < 'Z'; ++c) {
         uart_putc(c);
     }
