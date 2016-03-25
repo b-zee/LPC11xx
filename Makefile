@@ -1,5 +1,5 @@
 TTY  ?= /dev/ttyUSB0
-BAUD ?= 9600
+BAUD ?= 19200
 
 FILE   = _start main
 #core_cm0 system_LPC11xx
@@ -19,7 +19,7 @@ C_FLAGS = -std=c11 -O0 -mcpu=cortex-m0 -mthumb
 # -Wall -Wextra -Werror -pedantic
 
 
-all: clean $(HEX) $(BIN) $(LST)
+all: clean $(HEX) $(BIN)
 	@size $(OBJECT) $(HEX) $(ELF)
 
 
@@ -29,13 +29,16 @@ $(HEX): $(ELF)
 $(BIN): $(ELF)
 	arm-none-eabi-objcopy -O binary $(ELF) $(BIN)
 
-$(ELF): $(LD) $(OBJECT)
-	arm-none-eabi-gcc -nostartfiles -T $(LD) -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT)
+$(ELF): $(LD) $(OBJECT) $(LST)
+	arm-none-eabi-gcc -v -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT) -lgcc
 #-Wl,-gc-sections
 
 
 %.o: %.c
-	arm-none-eabi-gcc $(C_FLAGS) -g -o $@ -c $<
+	arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
+
+#%.s: %.c
+#	arm-none-eabi-gcc $(C_FLAGS) -fverbose-asm -o $@ -S $<
 
 %.lst: %.o
 	arm-none-eabi-objdump -S -d $< > $@
