@@ -15,8 +15,7 @@ LD  = LPC1114FN28.ld
 MAP = LPC1114FN28.map
 
 # C compiler flags
-C_FLAGS = -std=c11 -O0 -mcpu=cortex-m0 -mthumb
-# -Wall -Wextra -Werror -pedantic
+C_FLAGS = -Wall -Wextra -Werror -pedantic -std=c11 -O0 -mcpu=cortex-m0 -mthumb
 
 
 all: clean $(HEX) $(BIN)
@@ -30,7 +29,7 @@ $(BIN): $(ELF)
 	arm-none-eabi-objcopy -O binary $(ELF) $(BIN)
 
 $(ELF): $(LD) $(OBJECT) $(LST)
-	arm-none-eabi-gcc -v -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT) -lgcc
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT) -lgcc
 #-Wl,-gc-sections
 
 
