@@ -96,21 +96,43 @@ void uart_puti(int32_t i)
 }
 
 // Todo: specify port and pin
-void adc_initialize(void) {
-    LPC_IOCON->R_PIO1_0       &= ~0x87;        // reset FUNC (first 3 bits) and ADMODE to 0 (analog input mode)
-    LPC_IOCON->R_PIO1_0       |= (1 << 1);     // set pin as analog input (AD1)
-    LPC_IOCON->R_PIO1_0       &= ~(0x03 << 3);
-    LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 13);    // Enable ADC clock
-    LPC_SYSCON->PDRUNCFG      &= ~(1 << 4);    // enable power to ADC
-    LPC_ADC->CR               &= ~0x1FFFF;     // reset pin select, clkdiv and burst to 0
-    LPC_ADC->CR               |= 0x202;        // select pin AD1 and set clkdiv to 2. PCLK == 12, so 12/(2+1)== 4Mhz APB clock
-    LPC_ADC->CR               &= ~(0x7 << 24); // reset all start conversion bits to 0
+void adc_init(void) {
+    // Set FUNC to AD1
+    LPC_IOCON->R_PIO1_0 &= ~(0x7 << 0);
+    LPC_IOCON->R_PIO1_0 |=  (0x2 << 0);
+
+    // Set MODE to inactive
+    LPC_IOCON->R_PIO1_0 &= ~(0x3 << 3);
+
+    // Set ADMODE to analog input
+    LPC_IOCON->R_PIO1_0 &= ~(0x1 << 7);
+
+    // Enable AD clock
+    LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 13);
+
+    // Make ADC powered
+    LPC_SYSCON->PDRUNCFG      &= ~(1 << 4);
+
+    // Select AD1 to be sampled
+    LPC_ADC->CR  &= ~0xFF;
+    LPC_ADC->CR  |= (1 << 1);
+    //LPC_ADC->CR  &= ~0x1FFFF;     // reset pin select, clkdiv and burst to 0
+
+    // Set clock divider to 2 so 12 / 3 == 4 MHz
+    LPC_ADC->CR  &= ~(0xFF   << 8);
+    LPC_ADC->CR  |= ((3 - 1) << 8);
+
+    // Reset START
+    //LPC_ADC->CR  &= ~(0x7 << 24);
 }
-uint32_t adc_get(void) {
+uint16_t adc_get(void) {
+    // Start conversion
     LPC_ADC->CR |= (1 << 24);
 
+    // Wait for DONE bit to be set.
     while((LPC_ADC->GDR & (1 << 31)) == 0);
 
+    // Return binary fraction result from conversion
     return ((LPC_ADC->GDR & 0xFFC0) >> 6);
 }
 
@@ -139,79 +161,58 @@ void wait(uint32_t usec)
 
 void pwm_init(void)
 {
-    // Set pin 1.1 to function CT32B1_MAT0
-    LPC_IOCON->R_PIO1_1 &= ~0x7;
-    LPC_IOCON->R_PIO1_1 |=  0x3;
+    // Set pin 1.1 to function CT16B1_MAT0
+    LPC_IOCON->PIO1_9 &= ~0x7;
+    LPC_IOCON->PIO1_9 |=  0x1;
 
 
-    // Enable TMR32B1
-    LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 10);
+    // Enable TMR16B1
+    LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 8);
 
-    // TC increments every PR+1 (12 MHz / 12 = 1 MHz = 1 tick per microsecond)
-    LPC_TMR32B1->PR = 256 - 1;
+    // TC increments every PR+1
+    LPC_TMR16B1->PR = 12 - 1;
 
-    LPC_TMR32B1->MR0 = 30000;     // TC match
-    LPC_TMR32B1->MR3 = 65536 - 1; // Period
+    LPC_TMR16B1->MR0 = 18500; // LOW duration
+    LPC_TMR16B1->MR1 = 20000; // Period
 
-    // Enable PWM modes for MAT0
-    LPC_TMR32B1->PWMC |= (1 << 0);
+    // Enable PWM mode for MAT0
+    LPC_TMR16B1->PWMC |= (1 << 0);
 
-    // Reset counter when MR3 is matched
-    LPC_TMR32B1->MCR |= (1 << 10);
+    // Reset counter when MR1 is matched
+    LPC_TMR16B1->MCR |= (1 << 4);
 
     // Enable counter
-    LPC_TMR32B1->TCR |= (1 << 0);
+    LPC_TMR16B1->TCR |= (1 << 0);
 }
 
+
+int a = 3;
+int b;
 
 int main(void)
 {
     sys_init();
     uart_init();
-    //timer_init();
-    //adc_initialize();
+    timer_init();
+    adc_init();
     pwm_init();
 
-    uart_puts("Hello, World.\n");
+    uart_puts("Hello from the other side.\nHappy hacking.\n\n");
 
-    GPIO_LO(LPC_GPIO1, 1);
-    uart_puti(GPIO_GET(LPC_GPIO1, 1));
-    uart_putc('\n');
-
+    volatile int16_t v1 = adc_get();
+    volatile int16_t min = v1 - 32, max = v1 + 32;
     while (1) {
-        uart_puti(LPC_TMR32B1->TC);
-        uart_putc('-');
-        uart_puti(GPIO_GET(LPC_GPIO1, 1));
+        do {
+            v1 = adc_get();
+        } while (v1 > min && v1 < max);
+        min = v1 - 32;
+        max = v1 + 32;
+
+        LPC_TMR16B1->MR0 = 18000 + v1;
+        uart_puti(v1);
         uart_putc('\n');
     }
 
-    /*while (1) {
-        uart_putu(adc_get());
-        uart_putc('\n');
-    }*/
-
-    /* //Software PWM
-
-    GPIO_OUT(LPC_GPIO1, 8); // Configure as output
-
-    const uint32_t period1 = 2300,
-                   period2 = 20000 - period1;
-
-    uint32_t post = timer_count();
-
-	while (1) {
-        GPIO_HI(LPC_GPIO1, 8);
-
-        post += period1;
-        while (timer_count() < post);
-
-        GPIO_LO(LPC_GPIO1, 8);
-
-        post += period2;
-        while (timer_count() < post);
-    }*/
-
     while (1);
-
 	return 0;
 }

@@ -17,11 +17,12 @@ MAP = LPC1114FN28.map
 # C compiler flags
 C_FLAGS  = -mcpu=cortex-m0 -mthumb
 C_FLAGS += -std=c11 -O0
-C_FLAGS += -ffunction-sections -fdata-sections
-C_FLAGS += -g -fverbose-asm
+#C_FLAGS += -ffunction-sections -fdata-sections
+C_FLAGS += $(if $(DEBUG), -g) -fverbose-asm
 #-Wall -Wextra -Werror -pedantic
 
-all: clean $(HEX) $(BIN)
+
+all: clean $(LST) $(HEX) $(BIN)
 	@size $(OBJECT) $(HEX) $(ELF)
 
 
@@ -31,8 +32,8 @@ $(HEX): $(ELF)
 $(BIN): $(ELF)
 	arm-none-eabi-objcopy -O binary $(ELF) $(BIN)
 
-$(ELF): $(LD) $(OBJECT) $(LST)
-	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-gc-sections -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT) -lgcc
+$(ELF): $(LD) $(OBJECT)
+	arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-Map,$(MAP) -o $(ELF) $(OBJECT) -lgcc
 #-Wl,-gc-sections
 
 
@@ -50,5 +51,5 @@ clean:
 
 
 upload: $(BIN)
-	lpc21isp -control -verify -term -bin $(BIN) $(TTY) $(BAUD) 12000
+	lpc21isp -control -verify -term -bin -logfile $(BIN) $(TTY) $(BAUD) 12000
 #	lpc21isp -termonly $(TTY) $(BAUD) 12000

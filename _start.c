@@ -79,8 +79,8 @@ void _start(void)
     }
 
     // Copy .data from FLASH (ROM) to RAM
-    extern int __data_start;
     extern int __data_start_lma;
+    extern int __data_start;
     extern int __data_end;
 
     int *s = &__data_start_lma;

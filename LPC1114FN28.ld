@@ -4,6 +4,8 @@ MEMORY
     RAM   (rwx) : ORIGIN = 0x10000000, LENGTH =  4K
 }
 
+__stack_size = 1K;
+
 ENTRY(_start)
 
 SECTIONS
@@ -13,8 +15,6 @@ SECTIONS
         KEEP(*(.vectors))
         *(.text .text.*)
         *(.rodata)
-
-        . = ALIGN(4);
     } >FLASH
 
     .data : ALIGN(4)
@@ -23,8 +23,6 @@ SECTIONS
         __data_start = .;
         *(.data)
         __data_end = .;
-
-        . = ALIGN(4);
     } >RAM AT >FLASH
 
     .bss : ALIGN(4)
@@ -33,18 +31,14 @@ SECTIONS
         *(.bss)
         *(COMMON)
         __bss_end = .;
-
-        . = ALIGN(4);
     } >RAM
 
-    .stack : ALIGN(4)
+    .stack : ALIGN(8)
     {
         __stack_start = .;
-        . = . + 1K;
+        . = . + __stack_size;
         __stack_end = .;
-
-        . = ALIGN(4);
-    }
+    } >RAM
 
     /* /DISCARD/ : { *(*) } */
 }
