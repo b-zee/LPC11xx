@@ -4,11 +4,14 @@ Software to control an LPC11xx device.
 
 ## Todo
 
-- PWM;
-- ADC;
-- Pin control.
+-
+- Figure out interrupts;
+- Fix servo motor twitch.
 
 ## Done
 
+- Pin control;
+- PWM;
+- ADC;
 - UART;
 - Environment.
