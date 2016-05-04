@@ -1,14 +1,13 @@
 TTY  ?= /dev/ttyUSB0
 BAUD ?= 19200
 
-FILE   = $(LPC)core_cm0 $(LPC)system_LPC11xx $(basename $(wildcard $(SRC)*.c))
-#$(SRC)_start $(SRC)main $(SRC)uart
-OBJECT = $(addsuffix .o,   $(FILE))
-LST    = $(addsuffix .lst, $(FILE))
-
 # Folders
 SRC = src/
 LPC = LPC11xx/
+
+FILES = $(LPC)core_cm0 $(LPC)system_LPC11xx $(basename $(wildcard $(SRC)*.c))
+OBJ   = $(addsuffix .o,   $(FILES))
+LST   = $(addsuffix .lst, $(FILES))
 
 # File names
 BIN = $(SRC)LPC1114FN28.bin
@@ -19,42 +18,45 @@ MAP = $(SRC)LPC1114FN28.map
 
 # C compiler flags
 C_FLAGS  = -mcpu=cortex-m0 -mthumb
-C_FLAGS += -std=c11 -O0 -I$(LPC)
-#C_FLAGS += -ffunction-sections -fdata-sections
-C_FLAGS += $(if $(DEBUG), -g)
-#-Wall -Wextra -Werror -pedantic
+C_FLAGS += -Wall -Wextra -Werror -pedantic
+C_FLAGS += -std=c11 -O3 -ffreestanding -fno-tree-loop-distribute-patterns
+C_FLAGS += -ffunction-sections -fdata-sections
+C_FLAGS += $(if $(DEBUG), -g) -I$(LPC)
 
+# Linker flags
+LD_FLAGS  = -mcpu=cortex-m0 -mthumb -nostdlib
+LD_FLAGS += -Wl,-gc-sections
 
 all: clean $(HEX) $(BIN)
 lst: $(LST)
-size: $(OBJECT) $(ELF)
-	@size $(OBJECT) $(ELF)
+size: $(OBJ) $(ELF)
+	@size $(OBJ) $(ELF)
 
 $(HEX): $(ELF)
+	@echo "Creating" $@
 	@arm-none-eabi-objcopy -O ihex $(ELF) $(HEX)
-	@echo "Build" $@
 
 $(BIN): $(ELF)
+	@echo "Creating" $@
 	@arm-none-eabi-objcopy -O binary $(ELF) $(BIN)
-	@echo "Build" $@
 
-$(ELF): $(LD) $(OBJECT)
-	@arm-none-eabi-gcc -mcpu=cortex-m0 -mthumb -nostartfiles -nostdlib -nodefaultlibs -T $(LD) -Wl,-gc-sections -Wl,-Map,$(MAP) -o $@ $(OBJECT) -lgcc
-	@echo "Build" $@
+$(ELF): $(LD) $(OBJ)
+	@echo "Linking into" $@
+	@arm-none-eabi-gcc $(LD_FLAGS) -T $(LD) -Wl,-Map,$(MAP) -o $@ $(OBJ) -lgcc
 
 
 %.o: %.c
+	@echo "Building " $@
 	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
-	@echo "Build" $@
 
 %.lst: %.c
+	@echo "Building" $@
 	@arm-none-eabi-gcc $(C_FLAGS) -fverbose-asm -o $@ -S $<
-	@echo "Build" $@
 #	arm-none-eabi-objdump -S -d $< > $@
 
 
 clean:
-	@rm -rf $(OBJECT) $(LST)
+	@rm -rf $(OBJ) $(LST)
 	@rm -rf $(BIN) $(ELF) $(HEX) $(MAP)
 	@echo "Cleaned project"
 
