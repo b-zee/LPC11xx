@@ -8,7 +8,7 @@ extern void __stack_end(void); // Provided by linker
 typedef void (*handler)(void);
 
 // Array of function pointers
-const handler table[]  __attribute__ ((section(".vectors"))) = {
+const handler table[] __attribute__ ((section(".vectors"))) = {
     &__stack_end,  /* 0x00 - SP */
     _reset,        /* 0x04 - Reset (PC) */
     _reset,        /* 0x08 - NMI */

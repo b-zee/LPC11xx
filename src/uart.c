@@ -50,7 +50,7 @@ void uart_puts(const char *str)
 }
 void uart_putu(uint32_t i)
 {
-    // Approximation of chars needed to fit int digits
+    // Approximation of chars needed to fit digits
     char buffer[sizeof(i) * 8 / 3];
     size_t index = 0;
     do {
