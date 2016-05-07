@@ -6,4 +6,4 @@
 void timer_init(void);
 uint32_t timer_get(void);
 
-#endif/*TIMER_H*/
+#endif

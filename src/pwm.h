@@ -3,4 +3,4 @@
 
 void pwm_init(void);
 
-#endif/*PWM_H*/
+#endif
