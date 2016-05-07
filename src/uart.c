@@ -35,6 +35,12 @@ void uart_init(void)
     // Disable access to Divisor Latches (thus allowing to put chars in THR)
     LPC_UART->LCR &= ~(1 << 7);
 }
+char uart_getc(void) {
+    while (!(LPC_UART->LSR & (1 << 0)))
+        ;
+
+    return LPC_UART->RBR;
+}
 void uart_putc(const char c)
 {
     while (!(LPC_UART->LSR & (1 << 6)))

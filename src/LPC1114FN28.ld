@@ -33,10 +33,10 @@ SECTIONS
         __bss_end = .;
     } >RAM
 
-    .stack : ALIGN(8)
+    .stack : ALIGN(4)
     {
         __stack_start = .;
-        . = . + __stack_size;
+        . = ORIGIN(RAM) + LENGTH(RAM) - 4;
         __stack_end = .;
     } >RAM
 

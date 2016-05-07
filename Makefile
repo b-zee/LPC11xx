@@ -19,7 +19,7 @@ MAP = $(SRC)LPC1114FN28.map
 # C compiler flags
 C_FLAGS  = -mcpu=cortex-m0 -mthumb
 C_FLAGS += -Wall -Wextra -Werror -pedantic
-C_FLAGS += -std=c11 -O3 -ffreestanding -fno-tree-loop-distribute-patterns
+C_FLAGS += -std=c11 -O0 -ffreestanding -fno-tree-loop-distribute-patterns
 C_FLAGS += -ffunction-sections -fdata-sections
 C_FLAGS += $(if $(DEBUG), -g) -I$(LPC)
 
