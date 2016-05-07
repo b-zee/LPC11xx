@@ -74,8 +74,7 @@ void _start(void)
 
     int *p = &__bss_start;
     while (p != &__bss_end) {
-        *p = 0;
-        p++;
+        *p++ = 0;
     }
 
     // Copy .data from FLASH (ROM) to RAM
