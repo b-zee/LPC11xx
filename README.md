@@ -6,7 +6,7 @@ Software to control an LPC11xx device.
 
 This project uses [GNU Make](https://www.gnu.org/software/make/) to build the project.
 
-`make upload` uploads the image to the LPC11xx. By default to `/dev/ttyUSB0`, but can manually provided, just like the BAUD rate, which is 19200 by default:
+`make upload` uploads the image to the LPC11xx. By default to `/dev/ttyUSB0` with BAUD rate 19200, but can be manually provided:
 
     make TTY=COM4 BAUD=9600 upload
 
@@ -20,6 +20,7 @@ This project uses [GNU Make](https://www.gnu.org/software/make/) to build the pr
 
 ### Future
 
+- Reading from UART;
 - Handling interrupts and exceptions;
 - Threading.
 

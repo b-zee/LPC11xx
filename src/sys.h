@@ -3,4 +3,4 @@
 
 void sys_init(void);
 
-#endif/*SYS_H*/
+#endif
