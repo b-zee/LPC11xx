@@ -10,6 +10,9 @@ int main(void)
     //pwm_init();
 
     uart_puts("Hello from the other side.\nHappy hacking.\n\n");
+
+    uart_putu(sys_device_id());
+
     while (1);
 	return 0;
 }

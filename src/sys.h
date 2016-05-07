@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 void     sys_init(void);
-uint32_t sys_device_id(void)
+uint32_t sys_device_id(void);
 
 #endif
