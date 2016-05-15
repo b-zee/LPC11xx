@@ -7,7 +7,7 @@ LPC = LPC11xx/
 
 FILES = $(LPC)core_cm0 $(LPC)system_LPC11xx $(basename $(wildcard $(SRC)*.c))
 OBJ   = $(addsuffix .o,   $(FILES))
-LST   = $(addsuffix .lst, $(FILES))
+ASM   = $(addsuffix .asm, $(FILES))
 
 # File names
 BIN = $(SRC)LPC1114FN28.bin
@@ -28,7 +28,7 @@ LD_FLAGS  = -mcpu=cortex-m0 -mthumb -nostdlib
 LD_FLAGS += -Wl,-gc-sections
 
 all: clean $(HEX) $(BIN)
-lst: $(LST)
+asm: $(ASM)
 size: $(OBJ) $(ELF)
 	@size $(OBJ) $(ELF)
 
@@ -49,14 +49,14 @@ $(ELF): $(LD) $(OBJ)
 	@echo "Building " $@
 	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
 
-%.lst: %.c
+%.asm: %.c
 	@echo "Building" $@
 	@arm-none-eabi-gcc $(C_FLAGS) -fverbose-asm -o $@ -S $<
 #	arm-none-eabi-objdump -S -d $< > $@
 
 
 clean:
-	@rm -rf $(OBJ) $(LST)
+	@rm -rf $(OBJ) $(ASM)
 	@rm -rf $(BIN) $(ELF) $(HEX) $(MAP)
 	@echo "Cleaned project"
 

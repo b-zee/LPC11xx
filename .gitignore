@@ -8,7 +8,7 @@
 # Local
 *.log
 *.map
-*.lst
+*.asm
 
 # Sublime Text
 *.sublime-workspace
