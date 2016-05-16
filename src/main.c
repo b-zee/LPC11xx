@@ -1,7 +1,8 @@
 #include "sys.h"
 #include "uart.h"
 
-int main(void)
+
+void main(void)
 {
     sys_init();
     uart_init();
@@ -11,8 +12,7 @@ int main(void)
 
     uart_puts("Hello from the other side.\nHappy hacking.\n\n");
 
-    uart_putu(sys_device_id());
+    while (uart_getc() != '\n');
 
-    while (1);
-	return 0;
+    uart_putu(sys_device_id());
 }

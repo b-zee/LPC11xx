@@ -3,17 +3,17 @@
 #include "config.h"
 
 #include <LPC11xx.h>
-#include <stddef.h>
+#include <stddef.h>  // size_t
 
 void uart_init(void)
 {
-    // Set RXD and TXD functions
-    LPC_IOCON->PIO1_6 = (LPC_IOCON->PIO1_6 & ~0x7) | 0x1;
-    LPC_IOCON->PIO1_7 = (LPC_IOCON->PIO1_7 & ~0x7) | 0x1;
-
     // Enable clock for UART
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
     LPC_SYSCON->UARTCLKDIV     = UARTCLKDIV_int;
+
+    // Set RXD and TXD functions
+    LPC_IOCON->PIO1_6 = (LPC_IOCON->PIO1_6 & ~0x7) | 0x1;
+    LPC_IOCON->PIO1_7 = (LPC_IOCON->PIO1_7 & ~0x7) | 0x1;
 
     // Set Word Length Select to 8-bit character length
     LPC_UART->LCR |= 0x3;

@@ -3,7 +3,7 @@ void _reset(void) __attribute__ ((interrupt));
 void _start(void);
 
 extern void __stack_end(void); // Provided by linker
-extern int main(void);         // Application entry point
+extern void main(void);        // Application entry point
 
 // Function pointer type
 typedef void (*handler)(void);
@@ -88,5 +88,5 @@ void _start(void)
         *d++ = *s++;
     }
 
-    (void)main();
+    main();
 }
