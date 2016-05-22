@@ -5,7 +5,7 @@ BAUD ?= 19200
 SRC = src/
 LPC = LPC11xx/
 
-FILES = $(LPC)core_cm0 $(LPC)system_LPC11xx $(basename $(wildcard $(SRC)*.c))
+FILES = $(basename $(wildcard $(LPC)*.c)) $(basename $(wildcard $(SRC)*.c))
 OBJ   = $(addsuffix .o,   $(FILES))
 ASM   = $(addsuffix .asm, $(FILES))
 
