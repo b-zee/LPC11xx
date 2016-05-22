@@ -1,7 +1,5 @@
 #include "uart.h"
 
-#include "config.h"
-
 #include <LPC11xx.h>
 #include <stddef.h>  // size_t
 
@@ -9,7 +7,7 @@ void uart_init(void)
 {
     // Enable clock for UART
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
-    LPC_SYSCON->UARTCLKDIV     = UARTCLKDIV_int;
+    //LPC_SYSCON->UARTCLKDIV     = 1; // Already done by SystemInit
 
     // Set RXD and TXD functions
     LPC_IOCON->PIO1_6 = (LPC_IOCON->PIO1_6 & ~0x7) | 0x1;
@@ -22,8 +20,9 @@ void uart_init(void)
     LPC_UART->LCR |= (1 << 7);
 
     // Write divisor to latches
-    LPC_UART->DLM = (UART_DIVISOR >> 8) & 0xFF;
-    LPC_UART->DLL = (UART_DIVISOR >> 0) & 0xFF;
+    uint16_t uart_divisor = SystemCoreClock / LPC_SYSCON->SYSAHBCLKDIV / LPC_SYSCON->UARTCLKDIV / BAUD_RATE / 16;
+    LPC_UART->DLM = (uart_divisor >> 8) & 0xFF;
+    LPC_UART->DLL = (uart_divisor >> 0) & 0xFF;
 
     // Enable fractional baud rate generator
     //LPC_UART->U0LCR &= ~0xFF;

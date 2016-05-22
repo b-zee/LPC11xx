@@ -11,7 +11,7 @@ void adc_init(void)
     // Make ADC powered
     LPC_SYSCON->PDRUNCFG &= ~(1 << 4);
 
-    // Set FUNC to AD1
+    // Set pin 1.0 FUNC to AD1
     LPC_IOCON->R_PIO1_0 &= ~(0x7 << 0);
     LPC_IOCON->R_PIO1_0 |=  (0x2 << 0);
 
