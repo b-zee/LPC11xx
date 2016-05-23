@@ -1,9 +1,9 @@
-#include "uart.h"
+#include "zmn_uart.h"
 
-#include <LPC11xx.h>
+#include <LPC11xx.h> // LPC_
 #include <stddef.h>  // size_t
 
-void uart_init(void)
+void zmn_uart_init(void)
 {
     // Enable clock for UART
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 12);
@@ -34,26 +34,26 @@ void uart_init(void)
     // Disable access to Divisor Latches (thus allowing to put chars in THR)
     LPC_UART->LCR &= ~(1 << 7);
 }
-char uart_getc(void) {
+char zmn_uart_getc(void) {
     while (!(LPC_UART->LSR & (1 << 0)))
         ;
 
     return LPC_UART->RBR;
 }
-void uart_putc(const char c)
+void zmn_uart_putc(const char c)
 {
     while (!(LPC_UART->LSR & (1 << 6)))
         ;
 
     LPC_UART->THR = c;
 }
-void uart_puts(const char *str)
+void zmn_uart_puts(const char *str)
 {
     while (*str != '\0') {
         uart_putc(*str++);
     }
 }
-void uart_putu(uint32_t i)
+void zmn_uart_putu(uint32_t i)
 {
     // Approximation of chars needed to fit digits
     char buffer[sizeof(i) * 8 / 3];
@@ -66,7 +66,7 @@ void uart_putu(uint32_t i)
         uart_putc(buffer[index]);
     }
 }
-void uart_puti(int32_t i)
+void zmn_uart_puti(int32_t i)
 {
     if (i < 0) {
         uart_putc('-');

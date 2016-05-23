@@ -1,57 +1,59 @@
-#include "sys.h"
-#include "uart.h"
-#include "timer.h"
+#include "zmn.h"
 
 #include <LPC11xx.h>
 
 void t1(void)
 {
-    GPIO_OUT(LPC_GPIO1, 9);
+    zmn_gpio_out(LPC_GPIO1, 9);
 
-    uint32_t until = timer_get() + 1000 * 100;
+    uint32_t until = zmn_timer_get() + 1000 * 100;
 
     while (1) {
-        GPIO_HI(LPC_GPIO1, 9);
+        zmn_gpio_set(LPC_GPIO1, 9);
 
-        while (timer_get() < until);
+        while (zmn_timer_get() < until);
         until += 1000 * 100;
 
-        GPIO_LO(LPC_GPIO1, 9);
+        zmn_gpio_clear(LPC_GPIO1, 9);
 
-        while (timer_get() < until);
+        while (zmn_timer_get() < until);
         until += 1000 * 100;
     }
 }
 
 void t2(void)
 {
-    GPIO_OUT(LPC_GPIO1, 8);
+    zmn_gpio_out(LPC_GPIO1, 8);
 
-    uint32_t until = timer_get() + 1000 * 100;
+    uint32_t until = zmn_timer_get() + 1000 * 100;
 
     while (1) {
-        GPIO_HI(LPC_GPIO1, 8);
+        zmn_gpio_set(LPC_GPIO1, 8);
 
-        while (timer_get() < until);
+        while (zmn_timer_get() < until);
         until += 1000 * 100;
 
-        GPIO_LO(LPC_GPIO1, 8);
+        zmn_gpio_clear(LPC_GPIO1, 8);
 
-        while (timer_get() < until);
+        while (zmn_timer_get() < until);
         until += 1000 * 100;
     }
 }
 
 void main(void)
 {
-    sys_init();
-    uart_init();
-    timer_init();
+    zmn_init();
+    zmn_uart_init();
+    zmn_timer_init();
 
-    uart_puts("Hello from the other side.\nHappy hacking.\n\n");
+    /*zmn_thread_init();
+    zmn_thread_create(t1);
+    zmn_thread_create(t2);*/
+
+    zmn_uart_puts("Hello from the other side.\nHappy hacking.\n\n");
 
     // Echo back
     while (1) {
-        uart_putc(uart_getc());
+        zmn_uart_putc(zmn_uart_getc());
     }
 }

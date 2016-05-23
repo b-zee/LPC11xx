@@ -4,8 +4,6 @@ MEMORY
     RAM   (rwx) : ORIGIN = 0x10000000, LENGTH =  4K
 }
 
-__stack_size = 1K;
-
 ENTRY(_start)
 
 SECTIONS
@@ -36,7 +34,7 @@ SECTIONS
     .stack : ALIGN(4)
     {
         __stack_start = .;
-        . = ORIGIN(RAM) + LENGTH(RAM) - 4;
+        . = ORIGIN(RAM) + LENGTH(RAM);
         __stack_end = .;
     } >RAM
 

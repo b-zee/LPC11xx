@@ -1,9 +1,9 @@
-#include "adc.h"
+#include "zmn_adc.h"
 
 #include <LPC11xx.h>
 
 // Todo: specify port and pin
-void adc_init(void)
+void zmn_adc_init(void)
 {
     // Enable AD clock
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 13);
@@ -33,7 +33,7 @@ void adc_init(void)
     // Reset START
     //LPC_ADC->CR  &= ~(0x7 << 24);
 }
-uint16_t adc_get(void)
+uint16_t zmn_adc_get(void)
 {
     // Start conversion
     LPC_ADC->CR |= (1 << 24);

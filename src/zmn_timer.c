@@ -1,8 +1,8 @@
-#include "timer.h"
+#include "zmn_timer.h"
 
 #include <LPC11xx.h>
 
-void timer_init(void)
+void zmn_timer_init(void)
 {
     // Enable TMR32B0
     LPC_SYSCON->SYSAHBCLKCTRL |= (1 << 9);
@@ -13,7 +13,7 @@ void timer_init(void)
     // TC increments every PR+1 (12 MHz / 12 = 1 MHz = 1 tick per microsecond)
     LPC_TMR32B0->PR = 12 - 1;
 }
-uint32_t timer_get(void)
+uint32_t zmn_timer_get(void)
 {
     return LPC_TMR32B0->TC;
 }

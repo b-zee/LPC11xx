@@ -1,8 +1,8 @@
-#include "pwm.h"
+#include "zmn_pwm.h"
 
 #include <LPC11xx.h>
 
-void pwm_init(void)
+void zmn_pwm_init(void)
 {
     // Set pin 1.1 to function CT16B1_MAT0
     LPC_IOCON->PIO1_9 &= ~0x7;
