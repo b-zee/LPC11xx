@@ -50,7 +50,7 @@ void zmn_uart_putc(const char c)
 void zmn_uart_puts(const char *str)
 {
     while (*str != '\0') {
-        uart_putc(*str++);
+        zmn_uart_putc(*str++);
     }
 }
 void zmn_uart_putu(uint32_t i)
@@ -63,14 +63,14 @@ void zmn_uart_putu(uint32_t i)
     } while (i /= 10);
 
     while (index--) {
-        uart_putc(buffer[index]);
+        zmn_uart_putc(buffer[index]);
     }
 }
 void zmn_uart_puti(int32_t i)
 {
     if (i < 0) {
-        uart_putc('-');
+        zmn_uart_putc('-');
         i = -i;
     }
-    uart_putu(i);
+    zmn_uart_putu(i);
 }

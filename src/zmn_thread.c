@@ -1,19 +1,42 @@
 #include "zmn_thread.h"
 
+#include <LPC11xx.h>
+#include <stdint.h>
+#include <stddef.h>  // size_t
+
+#define ZMN_THREADS 8
+
+struct thread {
+    uint32_t sp;
+    uint32_t pc;
+};
+
+static struct thread threads[ZMN_THREADS];
+
 void zmn_thread_init(void)
 {
     (void)SysTick_Config(SystemCoreClock); // Todo: error handling
 
+    //__set_CONTROL(1 << 1); // Use PSP
+    //__ISB();               // Ensure execution with PSP
+
+    //extern int __stack_start;
+    //extern int __stack_end;
+
     // Essentially make this flow a thread (main thread)
     // // Todo: Copy main stack to new process stack and run further from there
-    // __set_CONTROL(1 << 1); // Use PSP
-    // __ISB();               // Ensure execution with PSP
 }
 
-/*void zmn_thread_create(void (*f)(void))
+void zmn_thread_create(void (*f)(void))
 {
+    size_t i;
+    while (threads[i].pc != 0) {
+        ++i;
+    }
 
-}*/
+
+    threads[i].pc = (uint32_t)f;
+}
 
 __attribute__ ((interrupt)) void _sys_tick(void)
 {

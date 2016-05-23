@@ -46,9 +46,9 @@ void main(void)
     zmn_uart_init();
     zmn_timer_init();
 
-    /*zmn_thread_init();
+    zmn_thread_init();
     zmn_thread_create(t1);
-    zmn_thread_create(t2);*/
+    zmn_thread_create(t2);
 
     zmn_uart_puts("Hello from the other side.\nHappy hacking.\n\n");
 
