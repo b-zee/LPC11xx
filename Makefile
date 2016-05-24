@@ -27,7 +27,7 @@ C_FLAGS += $(if $(DEBUG), -g) -I$(LPC) -D BAUD_RATE=$(BAUD)
 LD_FLAGS  = -mcpu=cortex-m0 -mthumb -nostdlib
 LD_FLAGS += -Wl,-gc-sections
 
-all: clean $(HEX) $(BIN)
+all: $(HEX) $(BIN)
 asm: $(ASM)
 size: $(OBJ) $(ELF)
 	@size $(OBJ) $(ELF)
@@ -48,6 +48,7 @@ $(ELF): $(LD) $(OBJ)
 %.o: %.c
 	@echo "Building " $@
 	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
+#	@arm-none-eabi-gcc $(C_FLAGS) -E -dM $<
 
 %.asm: %.c
 	@echo "Building" $@

@@ -2,8 +2,8 @@
 
 extern void __stack_end(void);
 
-__attribute__ ((interrupt, weak, noreturn)) void _dummy_handler(void);
-__attribute__ ((interrupt, weak, noreturn)) void _reset(void);
+__attribute__ ((interrupt, weak)) _Noreturn void _dummy_handler(void);
+__attribute__ ((interrupt, weak)) _Noreturn void _reset(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _nmi(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _hard_fault(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _SV_call(void);

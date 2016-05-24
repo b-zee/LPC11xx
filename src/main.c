@@ -4,40 +4,12 @@
 
 void t1(void)
 {
-    zmn_gpio_out(LPC_GPIO1, 9);
-
-    uint32_t until = zmn_timer_get() + 1000 * 100;
-
-    while (1) {
-        zmn_gpio_set(LPC_GPIO1, 9);
-
-        while (zmn_timer_get() < until);
-        until += 1000 * 100;
-
-        zmn_gpio_clear(LPC_GPIO1, 9);
-
-        while (zmn_timer_get() < until);
-        until += 1000 * 100;
-    }
+    zmn_uart_puts("t1\n");
 }
 
 void t2(void)
 {
-    zmn_gpio_out(LPC_GPIO1, 8);
-
-    uint32_t until = zmn_timer_get() + 1000 * 100;
-
-    while (1) {
-        zmn_gpio_set(LPC_GPIO1, 8);
-
-        while (zmn_timer_get() < until);
-        until += 1000 * 100;
-
-        zmn_gpio_clear(LPC_GPIO1, 8);
-
-        while (zmn_timer_get() < until);
-        until += 1000 * 100;
-    }
+    zmn_uart_puts("t2\n");
 }
 
 void main(void)
@@ -47,8 +19,8 @@ void main(void)
     zmn_timer_init();
 
     zmn_thread_init();
-    zmn_thread_create(t1);
-    zmn_thread_create(t2);
+    //zmn_thread_create(t1);
+    //zmn_thread_create(t2);
 
     zmn_uart_puts("Hello from the other side.\nHappy hacking.\n\n");
 
