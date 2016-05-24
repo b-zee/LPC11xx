@@ -46,7 +46,7 @@ $(ELF): $(LD) $(OBJ)
 
 
 %.o: %.c
-	@echo "Building " $@
+	@echo "Building" $@
 	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
 #	@arm-none-eabi-gcc $(C_FLAGS) -E -dM $<
 
