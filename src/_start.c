@@ -1,4 +1,4 @@
-#include <LPC11xx.h>
+#include <stdint.h>
 
 void _start(void)
 {
