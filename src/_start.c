@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "zmn.h"
 
 void _start(void)
 {
@@ -24,7 +25,10 @@ void _start(void)
         *d++ = *s++;
     }
 
-    main();
+    zmn_init();
+    zmn_uart_init();
+    zmn_timer_init();
+    zmn_thread_init(main);
 
-    while (1);
+    while (1); // LR value unknown, do not return
 }

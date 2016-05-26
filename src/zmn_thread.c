@@ -22,18 +22,23 @@ typedef struct thread {
 //static size_t thread_current;
 
 
-void zmn_thread_init(void)
+void zmn_thread_init(void (*f)(void))
 {
+    // Setup stacks for threads
+    // Create main thread
+    // Start main thread
+
+
     // Essentially make this flow a thread (main thread)
 
-    extern uint32_t __stack_start;
+    //extern uint32_t __stack_start;
     //extern uint32_t __stack_end;
 
-    __set_PSP(__get_MSP()); // Point PSP to main stack area
-    __set_CONTROL(1 << 1);  // Use PSP
-    __ISB();                // Ensure execution with PSP
+    //__set_PSP(__get_MSP()); // Point PSP to main stack area
+    //__set_CONTROL(1 << 1);  // Use PSP
+    //__ISB();                // Ensure execution with PSP
 
-    __set_MSP(__stack_start + 200); // Point MSP to new area
+    //__set_MSP(__stack_start + 200); // Point MSP to new area
 
 
     // // Todo: Copy main stack to new process stack and run further from there
