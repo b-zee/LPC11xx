@@ -8,9 +8,9 @@
  * Copyright (C) 2009 ARM Limited. All rights reserved.
  *
  * @par
- * ARM Limited (ARM) is supplying this software for use with Cortex-M 
- * processor based microcontrollers.  This file can be freely distributed 
- * within development tools that are supporting such ARM based processors. 
+ * ARM Limited (ARM) is supplying this software for use with Cortex-M
+ * processor based microcontrollers.  This file can be freely distributed
+ * within development tools that are supporting such ARM based processors.
  *
  * @par
  * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
@@ -66,7 +66,7 @@ __ASM uint32_t __get_PSP(void)
  *
  * @param  topOfProcStack  Process Stack Pointer
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 __ASM void __set_PSP(uint32_t topOfProcStack)
@@ -94,7 +94,7 @@ __ASM uint32_t __get_MSP(void)
  *
  * @param  topOfMainStack  Main Stack Pointer
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 __ASM void __set_MSP(uint32_t mainStackPointer)
@@ -163,7 +163,7 @@ __ASM void __set_PRIMASK(uint32_t priMask)
 
 /**
  * @brief  Return the Control Register value
- * 
+ *
  * @return Control value
  *
  * Return the content of the control register
@@ -187,7 +187,7 @@ __ASM void __set_CONTROL(uint32_t control)
   bx lr
 }
 
-#endif /* __ARMCC_VERSION  */ 
+#endif /* __ARMCC_VERSION  */
 
 
 
@@ -213,7 +213,7 @@ uint32_t __get_PSP(void)
  *
  * @param  topOfProcStack  Process Stack Pointer
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 void __set_PSP(uint32_t topOfProcStack)
@@ -241,7 +241,7 @@ uint32_t __get_MSP(void)
  *
  * @param  topOfMainStack  Main Stack Pointer
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 void __set_MSP(uint32_t topOfMainStack)
@@ -283,7 +283,7 @@ uint32_t __get_PSP(void)
 {
   uint32_t result=0;
 
-  __ASM volatile ("MRS %0, psp\n\t" 
+  __ASM volatile ("MRS %0, psp\n\t"
                   "MOV r0, %0 \n\t"
                   "BX  lr     \n\t"  : "=r" (result) );
   return(result);
@@ -294,7 +294,7 @@ uint32_t __get_PSP(void)
  *
  * @param  topOfProcStack  Process Stack Pointer
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 void __set_PSP(uint32_t topOfProcStack) __attribute__( ( naked ) );
@@ -317,7 +317,7 @@ uint32_t __get_MSP(void)
 {
   uint32_t result=0;
 
-  __ASM volatile ("MRS %0, msp\n\t" 
+  __ASM volatile ("MRS %0, msp\n\t"
                   "MOV r0, %0 \n\t"
                   "BX  lr     \n\t"  : "=r" (result) );
   return(result);
@@ -328,7 +328,7 @@ uint32_t __get_MSP(void)
  *
  * @param  topOfMainStack  Main Stack Pointer
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 void __set_MSP(uint32_t topOfMainStack) __attribute__( ( naked ) );
@@ -368,7 +368,7 @@ void __set_PRIMASK(uint32_t priMask)
 
 /**
  * @brief  Return the Control Register value
-* 
+*
 *  @return Control value
  *
  * Return the content of the control register
@@ -405,7 +405,7 @@ void __set_CONTROL(uint32_t control)
 uint32_t __REV(uint32_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -421,7 +421,7 @@ uint32_t __REV(uint32_t value)
 uint32_t __REV16(uint16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev16 %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -437,7 +437,7 @@ uint32_t __REV16(uint16_t value)
 int32_t __REVSH(int16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("revsh %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
