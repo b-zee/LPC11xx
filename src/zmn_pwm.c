@@ -4,7 +4,7 @@
 
 void zmn_pwm_init(void)
 {
-    // Set pin 1.1 to function CT16B1_MAT0
+    // Set pin 1.9 to function CT16B1_MAT0
     LPC_IOCON->PIO1_9 &= ~0x7;
     LPC_IOCON->PIO1_9 |=  0x1;
 
