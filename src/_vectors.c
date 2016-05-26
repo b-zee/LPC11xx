@@ -1,9 +1,9 @@
 #include <LPC11xx.h> // NVIC_SystemReset
 
 extern void __stack_end(void);
+extern void _start(void);
 
 __attribute__ ((interrupt, weak)) _Noreturn void _dummy_handler(void);
-__attribute__ ((interrupt, weak)) _Noreturn void _reset(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _nmi(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _hard_fault(void);
 __attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _SV_call(void);
@@ -16,7 +16,7 @@ typedef void (*handler)(void);
 // Vector table
 __attribute__ ((section(".vectors"))) const handler table[] = {
     &__stack_end,   // 0x00 | SP
-    _reset,         // 0x04 | Reset (PC)
+    _start,         // 0x04 | Reset (PC)
     _nmi,           // 0x08 | NMI
     _hard_fault,    // 0x0C | HardFault
     _dummy_handler, // 0x10 | Reserved
@@ -68,14 +68,6 @@ __attribute__ ((section(".vectors"))) const handler table[] = {
 void _dummy_handler(void)
 {
     NVIC_SystemReset();
-
-    while (1);
-}
-
-void _reset(void)
-{
-    extern void _start(void);
-    _start();
 
     while (1);
 }
