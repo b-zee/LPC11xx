@@ -4,13 +4,10 @@
 
 #include <LPC11xx.h>
 #include <stdint.h>
-#include <stddef.h>  // size_t
+//#include <stddef.h>  // size_t
 
-//#if UINTPTR_MAX < UINT32_MAX
-//#error UINTPTR_MAX < UINT32_MAX
-//#endif
+#define STACK_SIZE 256
 
-#define ZMN_THREADS 8
 
 typedef struct thread {
     uint32_t sp;
@@ -24,19 +21,24 @@ typedef struct thread {
 
 void zmn_thread_init(void (*f)(void))
 {
+    extern uint32_t __stack_end;
+
     // Setup stacks for threads
     // Create main thread
     // Start main thread
 
+    uint32_t *psp = &__stack_end - STACK_SIZE;
 
+    __set_PSP((uint32_t)psp);
+    __set_CONTROL(1 << 1);  // Use PSP
+    __ISB();                // Ensure execution with PSP
+
+    f();
     // Essentially make this flow a thread (main thread)
 
     //extern uint32_t __stack_start;
-    //extern uint32_t __stack_end;
 
     //__set_PSP(__get_MSP()); // Point PSP to main stack area
-    //__set_CONTROL(1 << 1);  // Use PSP
-    //__ISB();                // Ensure execution with PSP
 
     //__set_MSP(__stack_start + 200); // Point MSP to new area
 
