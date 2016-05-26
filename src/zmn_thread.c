@@ -1,4 +1,5 @@
 #include "zmn_thread.h"
+#include "zmn_routines.h"
 
 #include "zmn_uart.h"
 
@@ -27,11 +28,16 @@ void zmn_thread_init(void (*f)(void))
     // Create main thread
     // Start main thread
 
-    uint32_t *psp = &__stack_end - STACK_SIZE;
+    uint32_t *psp = &__stack_end - (STACK_SIZE / sizeof(uint32_t *));
 
-    __set_PSP((uint32_t)psp);
+    zmn_switch_sp(psp, &__stack_end);
+
+    /*__set_PSP((uint32_t)psp);
     __set_CONTROL(1 << 1);  // Use PSP
     __ISB();                // Ensure execution with PSP
+
+
+    __set_MSP((uint32_t)&__stack_end);*/
 
     f();
     // Essentially make this flow a thread (main thread)

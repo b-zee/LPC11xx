@@ -5,9 +5,10 @@ BAUD ?= 19200
 SRC = src/
 LPC = LPC11xx/
 
-FILES = $(basename $(wildcard $(LPC)*.c)) $(basename $(wildcard $(SRC)*.c))
-OBJ   = $(addsuffix .o,   $(FILES))
-ASM   = $(addsuffix .asm, $(FILES))
+C_FILES = $(basename $(wildcard $(SRC)*.c)) $(basename $(wildcard $(LPC)*.c))
+S_FILES = $(basename $(wildcard $(SRC)*.S))
+OBJ     = $(addsuffix .o,   $(S_FILES) $(C_FILES))
+ASM     = $(addsuffix .asm, $(C_FILES))
 
 # File names
 BIN = $(SRC)LPC1114FN28.bin
@@ -48,12 +49,14 @@ $(ELF): $(LD) $(OBJ)
 %.o: %.c
 	@echo "Building" $@
 	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
-#	@arm-none-eabi-gcc $(C_FLAGS) -E -dM $<
+
+%.o: %.S
+	@echo "Building" $@
+	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
 
 %.asm: %.c
 	@echo "Building" $@
 	@arm-none-eabi-gcc $(C_FLAGS) -fverbose-asm -o $@ -S $<
-#	arm-none-eabi-objdump -S -d $< > $@
 
 
 clean:
