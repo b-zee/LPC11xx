@@ -9,8 +9,7 @@
 
 #define STACK_SIZE 256
 
-
-typedef struct {
+struct thread {
     struct thread *next; // Linked list
     uint32_t       sp;
     uint32_t       r4;
@@ -21,9 +20,9 @@ typedef struct {
     uint32_t       r9;
     uint32_t       r10;
     uint32_t       r11;
-} thread;
+};
 
-typedef struct {
+struct stack_frame {
     __IO uint32_t r0;   // SP + 0x00 | R0    <-- PSP points here after interrupt
     __IO uint32_t r1;   // SP + 0x04 | R1
     __IO uint32_t r2;   // SP + 0x08 | R2
@@ -32,7 +31,7 @@ typedef struct {
     __IO uint32_t lr;   // SP + 0x14 | LR
     __IO uint32_t pc;   // SP + 0x18 | PC
     __IO uint32_t xpsr; // SP + 0x1C | xPSR
-} stack_frame;
+};
 
 //static thread *main_thread;
 
@@ -44,44 +43,22 @@ void zmn_thread_init(void (*main_fp)(void))
     // Point to beginning of new thread stack
     uint32_t *psp = &__stack_end - (STACK_SIZE / sizeof(uint32_t *));
 
-    thread      *t;
-    stack_frame *f;
+    struct thread      *t;
+    //struct stack_frame *f;
 
-    t   = (thread *)psp - 1;
-    f   = (stack_frame *)t - 1;
-    f   = (stack_frame *)((uintptr_t)f & ~0x4); // Align on 8-byte (2-word)
-    psp = (uint32_t *)f;
+    t   = (struct thread *)psp - 1;
+    //f   = (stack_frame *)t - 1;
+    //f   = (stack_frame *)((uintptr_t)f & ~0x4); // Align on 8-byte (2-word)
+    psp = (uint32_t *)t;
 
+    t->next = t;
 
-
-    // Setup stacks for threads
-    // Create main thread
-    // Start main thread
-
-
-    zmn_switch_sp(psp, &__stack_end);
-
-    /*__set_PSP((uint32_t)psp);
-    __set_CONTROL(1 << 1);  // Use PSP
-    __ISB();                // Ensure execution with PSP
-
-
-    __set_MSP((uint32_t)&__stack_end);*/
-
-    main_fp();
-    // Essentially make this flow a thread (main thread)
-
-    //extern uint32_t __stack_start;
-
-    //__set_PSP(__get_MSP()); // Point PSP to main stack area
-
-    //__set_MSP(__stack_start + 200); // Point MSP to new area
-
-
-    // // Todo: Copy main stack to new process stack and run further from there
+    zmn_switch_to_psp(psp, &__stack_end);
 
     // Enable SysTick interrupt
     (void)SysTick_Config(SystemCoreClock); // Todo: error handling
+
+    main_fp();
 
     while (1);
 }
@@ -101,25 +78,5 @@ void zmn_thread_init(void (*main_fp)(void))
 
 __attribute__ ((interrupt)) void _sys_tick(void)
 {
-    //SCB->ICSR |= 1 << 28; // Trigger PendSV
-}
-
-__attribute__ ((interrupt)) void _pendSV(void)
-{
-    /*
-    //size_t thread_next; // Todo: figure out next thread
-
-
-
-    uint32_t     psp = __get_PSP();
-    stack_frame *sf  = (stack_frame *)psp;
-
-    threads[thread_current].sp = sf->sp;
-
-
-
-    //__set_PSP(threads[thread_current + 1]); // Set stack pointer to next thread's stack
-    // Todo: modify PC and LR in exception entry stack frame ^
-    */
-
+    SCB->ICSR |= 1 << 28; // Trigger PendSV
 }

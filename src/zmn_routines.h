@@ -3,6 +3,6 @@
 
 #include <stdint.h>
 
-void zmn_switch_sp(uint32_t *psp, uint32_t *msp);
+void zmn_switch_to_psp(uint32_t *psp, uint32_t *msp);
 
 #endif

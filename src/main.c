@@ -18,17 +18,11 @@ void main(void)
 
     zmn_uart_puts("main\n");
 
-    int a,b;
-    a = 3;
-    b = 4;
-    b = a + b;
-
-    zmn_uart_puti(b);
+    zmn_uart_putu(__get_PSP());
     zmn_uart_putc('\n');
 
-    uint32_t psp = __get_PSP();
-
-    zmn_uart_putu(psp);
+    zmn_uart_putu(__get_MSP());
+    zmn_uart_putc('\n');
 
     while (1);
 }
