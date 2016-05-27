@@ -5,12 +5,13 @@
 
 #include <LPC11xx.h>
 #include <stdint.h>
-//#include <stddef.h>  // size_t
+#include <stddef.h>
 
-#define STACK_SIZE 256
+#define MAIN_STACK_SIZE 64 // 256 bytes (word is 4 bytes)
 
 struct thread {
     struct thread *next; // Linked list
+    size_t         size; // Stack word size
     uint32_t       sp;
     uint32_t       r4;
     uint32_t       r5;
@@ -33,15 +34,16 @@ struct stack_frame {
     __IO uint32_t xpsr; // SP + 0x1C | xPSR
 };
 
-//static thread *main_thread;
+//static struct thread *thread_main;
+//static struct thread *thread_current;
 
 
-void zmn_thread_init(void (*main_fp)(void))
+void zmn_thread_init(void (*main_fp)(void), size_t s)
 {
     extern uint32_t __stack_end;
 
-    // Point to beginning of new thread stack
-    uint32_t *psp = &__stack_end - (STACK_SIZE / sizeof(uint32_t *));
+    // Point to beginning of new main thread stack
+    uint32_t *psp = &__stack_end - MAIN_STACK_SIZE;
 
     struct thread      *t;
     //struct stack_frame *f;
@@ -51,8 +53,10 @@ void zmn_thread_init(void (*main_fp)(void))
     //f   = (stack_frame *)((uintptr_t)f & ~0x4); // Align on 8-byte (2-word)
     psp = (uint32_t *)t;
 
-    t->next = t;
+    t->next = t; // Only one thread, so points to itself
+    t->size = s;
 
+    // Set and use process stack, and reset main stack
     zmn_switch_to_psp(psp, &__stack_end);
 
     // Enable SysTick interrupt

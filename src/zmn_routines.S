@@ -1,6 +1,5 @@
     .section    .text.zmn_thread_my_routine
     .align      2
-    .thumb
     .thumb_func
     .global     zmn_switch_to_psp
 zmn_switch_to_psp:
@@ -10,10 +9,21 @@ zmn_switch_to_psp:
     ISB                // Synchronize to ensure PSP use
     MSR  msp,     r1   // Set MSP value
     BX   LR
-    .section    .text.zmn_thread_my_routine
+
+
+    .section    .text._pendSV
     .align      2
-    .thumb
     .thumb_func
     .global     _pendSV
 _pendSV:
+    BX LR
+
+
+
+    .section    .text.zmn_create_stack
+    .align      2
+    .thumb_func
+    .global     zmn_create_stack
+zmn_thread_init:
+
     BX LR
