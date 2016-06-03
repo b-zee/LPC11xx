@@ -1,8 +1,30 @@
+/**
+ * @author Benno Zeeman <bzeeman@live.nl>
+ * @todo   Make use of burst mode for more accurate measuring
+ * @todo   Allow selecting specific pin
+ */
+//  Copyright (C) 2016 Benno Zeeman
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "zmn_adc.h"
 
 #include <LPC11xx.h>
 
-// Todo: specify port and pin
+/**
+ * @details  The conversion is setup to use pin 1-0, function AD1. It uses a 4 MHz clock.
+ */
 void zmn_adc_init(void)
 {
     // Enable AD clock
@@ -11,7 +33,7 @@ void zmn_adc_init(void)
     // Make ADC powered
     LPC_SYSCON->PDRUNCFG &= ~(1 << 4);
 
-    // Set pin 1.0 FUNC to AD1
+    // Set pin 1-0 FUNC to AD1
     LPC_IOCON->R_PIO1_0 &= ~(0x7 << 0);
     LPC_IOCON->R_PIO1_0 |=  (0x2 << 0);
 
@@ -33,6 +55,7 @@ void zmn_adc_init(void)
     // Reset START
     //LPC_ADC->CR  &= ~(0x7 << 24);
 }
+
 uint16_t zmn_adc_get(void)
 {
     // Start conversion

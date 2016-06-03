@@ -13,8 +13,15 @@
 #include "zmn_timer.h"
 #include "zmn_uart.h"
 
-
+/**
+ * @brief  Setup LPC device.
+ */
 void     zmn_init(void);
+/**
+ * @brief  Read unique device ID from LPC part.
+ *
+ * @return  Part ID numbers for this part.
+ */
 uint32_t zmn_device_id(void);
 
 #endif
