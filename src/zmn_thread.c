@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define MAIN_STACK_SIZE 64 // 256 bytes (word is 4 bytes)
+#define MAIN_STACK_SIZE 64 // 64 words = 256 bytes
 
 struct thread {
     struct thread *next; // Linked list
@@ -38,7 +38,7 @@ struct stack_frame {
 //static struct thread *thread_current;
 
 
-void zmn_thread_init(void (*main_fp)(void), size_t s)
+void zmn_thread_init(void (*main_fp)(void))
 {
     extern uint32_t __stack_end;
 
@@ -54,7 +54,7 @@ void zmn_thread_init(void (*main_fp)(void), size_t s)
     psp = (uint32_t *)t;
 
     t->next = t; // Only one thread, so points to itself
-    t->size = s;
+    t->size = MAIN_STACK_SIZE;
 
     // Set and use process stack, and reset main stack
     zmn_switch_to_psp(psp, &__stack_end);

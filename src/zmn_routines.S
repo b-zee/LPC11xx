@@ -17,13 +17,3 @@ zmn_switch_to_psp:
     .global     _pendSV
 _pendSV:
     BX LR
-
-
-
-    .section    .text.zmn_create_stack
-    .align      2
-    .thumb_func
-    .global     zmn_create_stack
-zmn_thread_init:
-
-    BX LR
