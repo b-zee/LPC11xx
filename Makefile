@@ -5,10 +5,11 @@ BAUD ?= 19200
 SRC = src/
 LPC = LPC11xx/
 
-C_FILES = $(basename $(wildcard $(SRC)*.c)) $(basename $(wildcard $(LPC)*.c))
-S_FILES = $(basename $(wildcard $(SRC)*.S))
-OBJ     = $(addsuffix .o,   $(S_FILES) $(C_FILES))
-ASM     = $(addsuffix .asm, $(C_FILES))
+C_FILES = $(wildcard $(SRC)*.c) $(wildcard $(LPC)*.c)
+S_FILES = $(wildcard $(SRC)*.S)
+OBJ     = $(C_FILES:.c=.o) $(S_FILES:.S=.o)
+ASM     = $(C_FILES:.c=.asm)
+DEP     = $(C_FILES:.c=.d)
 
 # File names
 BIN = $(SRC)LPC1114FN28.bin
@@ -33,6 +34,7 @@ asm: $(ASM)
 size: $(OBJ) $(ELF)
 	@size $(OBJ) $(ELF)
 
+
 $(HEX): $(ELF)
 	@echo "Creating" $@
 	@arm-none-eabi-objcopy -O ihex $(ELF) $(HEX)
@@ -48,7 +50,7 @@ $(ELF): $(LD) $(OBJ)
 
 %.o: %.c
 	@echo "Building" $@
-	@arm-none-eabi-gcc $(C_FLAGS) -o $@ -c $<
+	@arm-none-eabi-gcc -MMD -MF $(<:.c=.d) $(C_FLAGS) -o $@ -c $<
 
 %.o: %.S
 	@echo "Building" $@
@@ -60,10 +62,11 @@ $(ELF): $(LD) $(OBJ)
 
 
 clean:
-	@rm -rf $(OBJ) $(ASM)
+	@rm -rf $(OBJ) $(ASM) $(DEP)
 	@rm -rf $(BIN) $(ELF) $(HEX) $(MAP)
 	@echo "Cleaned project"
 
+-include $(DEP)
 
 upload: $(BIN)
 	lpc21isp -control -verify -term -bin $(BIN) $(TTY) $(BAUD) 12000

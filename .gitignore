@@ -9,6 +9,7 @@
 *.log
 *.map
 *.asm
+*.d
 
 # Sublime Text
 *.sublime-workspace
