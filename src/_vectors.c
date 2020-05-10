@@ -4,11 +4,11 @@ extern void __stack_end(void);
 extern void _start(void);
 
 __attribute__ ((interrupt, weak)) _Noreturn void _dummy_handler(void);
-__attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _nmi(void);
-__attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _hard_fault(void);
-__attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _SV_call(void);
-__attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _pendSV(void);
-__attribute__ ((interrupt, weak, alias("_dummy_handler"))) void _sys_tick(void);
+__attribute__ ((interrupt, weak, alias("_dummy_handler"))) _Noreturn void _nmi(void);
+__attribute__ ((interrupt, weak, alias("_dummy_handler"))) _Noreturn void _hard_fault(void);
+__attribute__ ((interrupt, weak, alias("_dummy_handler"))) _Noreturn void _SV_call(void);
+__attribute__ ((interrupt, weak, alias("_dummy_handler"))) _Noreturn void _pendSV(void);
+__attribute__ ((interrupt, weak, alias("_dummy_handler"))) _Noreturn void _sys_tick(void);
 
 // Vectors type
 typedef void (*handler)(void);
